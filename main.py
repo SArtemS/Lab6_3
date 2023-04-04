@@ -117,23 +117,17 @@ def find_corr_class_survival(data):
     return corr_val
 
 
-# TODO #7
+# TODO #7 Посчитайте средний возраст пассажиров и медиану.
 def find_pass_mean_median(data):
-    """
-    7. Посчитайте средний возраст пассажиров и медиану.
-    """
-
     mean_age, median = None, None
+    mean_age = round(data['Age'].sum()/get_number_of_pass(data), 1)
     return mean_age, median
 
 
-# TODO #8
+# TODO #8 Посчитайте среднюю цену за билет и медиану.
 def find_ticket_mean_median(data):
-    """
-    8. Посчитайте среднюю цену за билет и медиану.
-    """
-
     mean_price, median = None, None
+    mean_price = round(data['Fare'].sum()/get_number_of_pass(data), 2)
     return mean_price, median
 
 
@@ -183,3 +177,8 @@ print(get_port_distrib(data))
 print(get_surv_percent(data))
 #4
 print(get_class_distrib(data))
+
+#7
+print(find_pass_mean_median(data))
+#8
+print(find_ticket_mean_median(data))
