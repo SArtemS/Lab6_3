@@ -1,27 +1,10 @@
-# Программирование (Python)
-# 6 семестр, тема 1
-
-# Лабораторная работа 3
 """
-Используя обучающий набор данных о пассажирах Титаника, находящийся в проекте (оригинал: https://www.kaggle.com/c/titanic/data), найдите ответы на следующие вопросы: 
-
-1. Какое количество мужчин и женщин ехало на параходе? Приведите два числа через пробел.
-
-2. Подсчитайте сколько пассажиров загрузилось на борт в различных портах? Приведите три числа через пробел.
-
-3. Посчитайте долю (процент) погибших на параходе (число и процент)?
-
-4. Какие доли составляли пассажиры первого, второго, третьего класса?
-
 5. Вычислите коэффициент корреляции Пирсона между количеством супругов (SibSp) и количеством детей (Parch).
 
 6. Выясните есть ли корреляция (вычислите коэффициент корреляции Пирсона) между:
 1) возрастом и параметром Survived;
 2) полом человека и параметром Survived;
 3) классом, в котором пассажир ехал, и параметром Survived.
-
-7. Посчитайте средний возраст пассажиров и медиану.
-8. Посчитайте среднюю цену за билет и медиану.
 
 9. Какое самое популярное мужское имя на корабле?
 10. Какие самые популярные мужское и женские имена людей, старше 15 лет на корабле?
@@ -58,15 +41,20 @@ def get_surv_percent(data):
     n_died, perc_died = 0, 0
     res = data['Survived'].value_counts()
     n_died = res[0]
-    perc_died = round(n_died/get_number_of_pass(data) * 100, 1)
+    perc_died = round(n_died/get_number_of_pass(data) * 100, 2)
     return n_died, perc_died
 
 
 # TODO #4 Какие доли составляли пассажиры первого, второго, третьего класса? 
 def get_class_distrib(data):
-    n_pas_f_cl, n_pas_s_cl, n_pas_t_cl = 0, 0, 0
+    n_pas_f_cl, n_pas_s_cl, n_pas_t_cl = (0, 0), (0, 0), (0, 0)
     res = data['Pclass'].value_counts()
-    n_pas_f_cl, n_pas_s_cl, n_pas_t_cl = res[1], res[2], res[3]
+    all_pass = get_number_of_pass(data)
+    n_pas_f_cl, n_pas_s_cl, n_pas_t_cl = (
+        (res[1], round(res[1]/all_pass * 100, 2)), 
+        (res[2], round(res[2]/all_pass * 100, 2)), 
+        (res[3], round(res[3]/all_pass * 100, 2))
+    )
     return n_pas_f_cl, n_pas_s_cl, n_pas_t_cl
 
 
@@ -120,15 +108,25 @@ def find_corr_class_survival(data):
 # TODO #7 Посчитайте средний возраст пассажиров и медиану.
 def find_pass_mean_median(data):
     mean_age, median = None, None
-    mean_age = round(data['Age'].sum()/get_number_of_pass(data), 1)
-    return mean_age, median
+    all_pass = get_number_of_pass(data)
+    mean_age = round(data['Age'].sum()/all_pass, 2)
+    if all_pass % 2 != 0:
+        median = data.iloc[all_pass//2]['Age']
+    else:
+        median = (data.iloc[all_pass//2 - 1]['Age'] + data.iloc[all_pass//2]['Age'])/.2
+    return mean_age, round(median, 2)
 
 
 # TODO #8 Посчитайте среднюю цену за билет и медиану.
 def find_ticket_mean_median(data):
     mean_price, median = None, None
-    mean_price = round(data['Fare'].sum()/get_number_of_pass(data), 2)
-    return mean_price, median
+    all_pass = get_number_of_pass(data)
+    mean_price = round(data['Fare'].sum()/all_pass, 2)
+    if all_pass % 2 != 0:
+        median = data.iloc[all_pass//2]['Fare']
+    else:
+        median = (data.iloc[all_pass//2 - 1]['Fare'] + data.iloc[all_pass//2]['Fare'])/.2
+    return mean_price, round(median, 2)
 
 
 # TODO #9
@@ -168,17 +166,31 @@ def get_number_of_pass(data):
 
 # print(find_corr_sex_survival(data))
 #0
-print(get_number_of_pass(data))
+print("0. Вычисление количества пассажиров на параходе\nРезультат: количество пассажиров на параходе = " + str(get_number_of_pass(data)) + ".")
 #1
-print(get_sex_distrib(data))
+sex_distrib = get_sex_distrib(data)
+print("\n1. Какое количество мужчин и женщин ехало на параходе?\nРезультат: количество мужчин = " + str(sex_distrib[0])
+      + ", количество женщин = " + str(sex_distrib[1]) + ".")
 #2
-print(get_port_distrib(data))
+port_distrib = get_port_distrib(data)
+print("\n2. Сколько пассажиров загрузилось на борт в различных портах?\nРезультат: пассажиров на порту S = " + str(port_distrib[0])
+      + ", пассажиров на порту C = " + str(port_distrib[1]) + ", пассажиров на порту Q = " + str(port_distrib[2]) + ".")
 #3
-print(get_surv_percent(data))
+surv_percent = get_surv_percent(data)
+print("\n3. Какая доля погибших на параходе?\nРезультат: " + "число погибших = " + str(surv_percent[0]) + ", % погибших = " 
+      + str(surv_percent[1]) + "%.")
 #4
-print(get_class_distrib(data))
+class_distrib = get_class_distrib(data)
+print("\n4. Какие доли составляли пассажиры первого, второго, третьего класса?\nРезультат:\nчисло пассажиров первого класса = " 
+      + str(class_distrib[0][0]) + ", % пассажиров первого класса = " + str(class_distrib[0][1]) + "%;\nчисло пассажиров второго класса = "
+      + str(class_distrib[1][0]) + ", % пассажиров второго класса = " + str(class_distrib[1][1]) + "%;\nчисло пассажиров третьего класса = "
+      + str(class_distrib[2][0]) + ", % пассажиров второго класса = " + str(class_distrib[2][1]) + "%.")
 
 #7
-print(find_pass_mean_median(data))
+pass_mean_median = find_pass_mean_median(data)
+print("\n7. Каков средний возраст пассажиров и какое значение медианы?\nРезультат: средний возраст = " 
+      + str(pass_mean_median[0]) + ", медиана = " + str(pass_mean_median[1]) + ".")
 #8
-print(find_ticket_mean_median(data))
+ticket_mean_median = find_ticket_mean_median(data)
+print("\n8. Какова средняя цена за билет и какое значение медианы?\nРезультат: средняя цена за билет = " 
+      + str(ticket_mean_median[0]) + ", медиана = " + str(ticket_mean_median[1]) + ".")
