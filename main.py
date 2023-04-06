@@ -1,6 +1,4 @@
 """
-5. Вычислите коэффициент корреляции Пирсона между количеством супругов (SibSp) и количеством детей (Parch).
-
 6. Выясните есть ли корреляция (вычислите коэффициент корреляции Пирсона) между:
 1) возрастом и параметром Survived;
 2) полом человека и параметром Survived;
@@ -8,9 +6,6 @@
 
 9. Какое самое популярное мужское имя на корабле?
 10. Какие самые популярные мужское и женские имена людей, старше 15 лет на корабле?
-
-
-Для вычисления 3, 4, 5, 6, 7, 8 используйте тип данных float с точностью два знака в дробной части. 
 """
 
 import pandas as pd  # импортирование библиотеки для считывания данных
@@ -58,14 +53,22 @@ def get_class_distrib(data):
     return n_pas_f_cl, n_pas_s_cl, n_pas_t_cl
 
 
-# TODO #5
+# TODO #5 Вычислите коэффициент корреляции Пирсона между количеством супругов (SibSp) и количеством детей (Parch).
 def find_corr_sibsp_parch(data):
-    """
-    5. Вычислите коэффициент корреляции Пирсона между количеством супругов (SibSp) и количеством детей (Parch).
-    """
-
-    corr_val = -1
-    return corr_val
+    all_pass = get_number_of_pass(data)
+    delimoe = 0
+    delitel_x = 0
+    delitel_y = 0
+    SibSp_mean = round(data['SibSp'].sum()/all_pass)
+    Parch_mean = round(data['Parch'].sum()/all_pass)
+    for i in range(all_pass):
+        SibSp_sub_mean = data.iloc[i]['SibSp'] - SibSp_mean
+        Parch_sub_mean = data.iloc[i]['Parch'] - Parch_mean
+        delimoe += SibSp_sub_mean * Parch_sub_mean
+        delitel_x += SibSp_sub_mean * SibSp_sub_mean 
+        delitel_y += Parch_sub_mean * Parch_sub_mean
+    corr_val = delimoe/math.sqrt(delitel_x*delitel_y)
+    return round(corr_val, 2)
 
 
 # TODO #6-1
@@ -185,7 +188,8 @@ print("\n4. Какие доли составляли пассажиры перв
       + str(class_distrib[0][0]) + ", % пассажиров первого класса = " + str(class_distrib[0][1]) + "%;\nчисло пассажиров второго класса = "
       + str(class_distrib[1][0]) + ", % пассажиров второго класса = " + str(class_distrib[1][1]) + "%;\nчисло пассажиров третьего класса = "
       + str(class_distrib[2][0]) + ", % пассажиров второго класса = " + str(class_distrib[2][1]) + "%.")
-
+#5
+print("\n5. Какой коэффициент корреляции Пирсона между количеством супругов (SibSp) и количеством детей (Parch)?\nРезультат: " + str(find_corr_sibsp_parch(data)))
 #7
 pass_mean_median = find_pass_mean_median(data)
 print("\n7. Каков средний возраст пассажиров и какое значение медианы?\nРезультат: средний возраст = " 
