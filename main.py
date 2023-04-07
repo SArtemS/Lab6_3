@@ -1,19 +1,16 @@
 """
-6. Выясните есть ли корреляция (вычислите коэффициент корреляции Пирсона) между:
-1) возрастом и параметром Survived;
-2) полом человека и параметром Survived;
-3) классом, в котором пассажир ехал, и параметром Survived.
-
 9. Какое самое популярное мужское имя на корабле?
 10. Какие самые популярные мужское и женские имена людей, старше 15 лет на корабле?
 """
 
-import pandas as pd  # импортирование библиотеки для считывания данных
-import math
+import pandas as pd  
 
-# считаем данные из файла, в качестве столбца индексов используем PassengerId
 data = pd.read_csv('train.csv', index_col="PassengerId")
 
+# TODO #0 Общее количество пассажиров. 
+def get_number_of_pass(data):
+    res = data.shape[0]
+    return res
 
 # TODO #1 Какое количество мужчин и женщин ехало на параходе? Приведите два числа через пробел.
 def get_sex_distrib(data):
@@ -55,57 +52,32 @@ def get_class_distrib(data):
 
 # TODO #5 Вычислите коэффициент корреляции Пирсона между количеством супругов (SibSp) и количеством детей (Parch).
 def find_corr_sibsp_parch(data):
-    all_pass = get_number_of_pass(data)
-    delimoe = 0
-    delitel_x = 0
-    delitel_y = 0
-    SibSp_mean = round(data['SibSp'].sum()/all_pass)
-    Parch_mean = round(data['Parch'].sum()/all_pass)
-    for i in range(all_pass):
-        SibSp_sub_mean = data.iloc[i]['SibSp'] - SibSp_mean
-        Parch_sub_mean = data.iloc[i]['Parch'] - Parch_mean
-        delimoe += SibSp_sub_mean * Parch_sub_mean
-        delitel_x += SibSp_sub_mean * SibSp_sub_mean 
-        delitel_y += Parch_sub_mean * Parch_sub_mean
-    corr_val = delimoe/math.sqrt(delitel_x*delitel_y)
+    corr_val = data['SibSp'].corr(data['Parch'])
     return round(corr_val, 2)
 
 
-# TODO #6-1
+# TODO #6-1 Выясните есть ли корреляция (вычислите коэффициент корреляции Пирсона) между: возрастом и параметром Survived;
 def find_corr_age_survival(data):
-    """
-    6. Выясните есть ли корреляция (вычислите коэффициент корреляции Пирсона) между:
-    
-    - возрастом и параметром Survived;
-
-    """
-
-    corr_val = -1
-    return corr_val
+    corr_val = data['Age'].corr(data['Survived'])
+    return round(corr_val, 2)
 
 
-# TODO #6-2
+# TODO #6-2 Выясните есть ли корреляция (вычислите коэффициент корреляции Пирсона) между: полом человека и параметром Survived;
 def find_corr_sex_survival(data):
-    """
-    6. Выясните есть ли корреляция (вычислите коэффициент корреляции Пирсона) между:
-    
-    - полом человека и параметром Survived;
-    """
+    int_sex = []
+    for i in range(get_number_of_pass(data)):
+        if data.iloc[i]['Sex'] == "female": int_sex.append(0)
+        else: int_sex.append(1)
+    alt_sex_data = {'Sex' : int_sex}
+    alt_sex_data_pd = pd.DataFrame(alt_sex_data)
+    corr_val = alt_sex_data_pd['Sex'].corr(data['Survived'])
+    return round(corr_val, 4)
 
-    corr_val = -1
-    return corr_val
 
-
-# TODO #6-3
+# TODO #6-3 Выясните есть ли корреляция (вычислите коэффициент корреляции Пирсона) между: классом, в котором пассажир ехал, и параметром Survived.
 def find_corr_class_survival(data):
-    """
-    6. Выясните есть ли корреляция (вычислите коэффициент корреляции Пирсона) между:
-
-    - классом, в котором пассажир ехал, и параметром Survived.
-    """
-
-    corr_val = -1
-    return corr_val
+    corr_val = data['Pclass'].corr(data['Survived'])
+    return round(corr_val, 2)
 
 
 # TODO #7 Посчитайте средний возраст пассажиров и медиану.
@@ -149,51 +121,51 @@ def find_popular_adult_names(data):
     popular_male_name, popular_female_name = "", ""
     return popular_male_name, popular_female_name
 
-
-# ------------------------------
-
-# Реализуем вычисление количества пассажиров на параходе и опишем предварительные действия с данными (считывание)
-
-# После загрузки данных с помощью метода read_csv и индексации его по первому столбцу данных (PassangerId) становится доступно выборка данных по индексу.
-# С помощью запроса ниже мы можем получить имя сотого пассажира
-# print(type(data.iloc[100]))
-# print(data.iloc[100]['Name'])
-
-# print((data['Name'], data['Sex']))
-
-
-def get_number_of_pass(data):
-    res = data.shape[0]
-    return res
-
-
-# print(find_corr_sex_survival(data))
 #0
 print("0. Вычисление количества пассажиров на параходе\nРезультат: количество пассажиров на параходе = " + str(get_number_of_pass(data)) + ".")
+
 #1
 sex_distrib = get_sex_distrib(data)
 print("\n1. Какое количество мужчин и женщин ехало на параходе?\nРезультат: количество мужчин = " + str(sex_distrib[0])
       + ", количество женщин = " + str(sex_distrib[1]) + ".")
+
 #2
 port_distrib = get_port_distrib(data)
 print("\n2. Сколько пассажиров загрузилось на борт в различных портах?\nРезультат: пассажиров на порту S = " + str(port_distrib[0])
       + ", пассажиров на порту C = " + str(port_distrib[1]) + ", пассажиров на порту Q = " + str(port_distrib[2]) + ".")
+
 #3
 surv_percent = get_surv_percent(data)
 print("\n3. Какая доля погибших на параходе?\nРезультат: " + "число погибших = " + str(surv_percent[0]) + ", % погибших = " 
       + str(surv_percent[1]) + "%.")
+
 #4
 class_distrib = get_class_distrib(data)
 print("\n4. Какие доли составляли пассажиры первого, второго, третьего класса?\nРезультат:\nчисло пассажиров первого класса = " 
       + str(class_distrib[0][0]) + ", % пассажиров первого класса = " + str(class_distrib[0][1]) + "%;\nчисло пассажиров второго класса = "
       + str(class_distrib[1][0]) + ", % пассажиров второго класса = " + str(class_distrib[1][1]) + "%;\nчисло пассажиров третьего класса = "
       + str(class_distrib[2][0]) + ", % пассажиров второго класса = " + str(class_distrib[2][1]) + "%.")
+
 #5
 print("\n5. Какой коэффициент корреляции Пирсона между количеством супругов (SibSp) и количеством детей (Parch)?\nРезультат: " + str(find_corr_sibsp_parch(data)))
+
+#6.1
+print("\n6.1. Выясните есть ли корреляция (вычислите коэффициент корреляции Пирсона) между: возрастом и параметром Survived.\nРезультат: "
+      + str(find_corr_age_survival(data)))
+
+#6.2
+print("\n6.2. Выясните есть ли корреляция (вычислите коэффициент корреляции Пирсона) между: полом человека и параметром Survived.\nРезультат: "
+      + str(find_corr_sex_survival(data)))
+
+#6.3
+print("\n6.3. Выясните есть ли корреляция (вычислите коэффициент корреляции Пирсона) между: классом, в котором пассажир ехал, и параметром Survived.\nРезультат: "
+      + str(find_corr_class_survival(data)))
+
 #7
 pass_mean_median = find_pass_mean_median(data)
 print("\n7. Каков средний возраст пассажиров и какое значение медианы?\nРезультат: средний возраст = " 
       + str(pass_mean_median[0]) + ", медиана = " + str(pass_mean_median[1]) + ".")
+
 #8
 ticket_mean_median = find_ticket_mean_median(data)
 print("\n8. Какова средняя цена за билет и какое значение медианы?\nРезультат: средняя цена за билет = " 
