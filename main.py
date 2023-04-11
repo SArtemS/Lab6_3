@@ -14,7 +14,6 @@ def get_number_of_pass(data):
 
 # TODO #1 Какое количество мужчин и женщин ехало на параходе? Приведите два числа через пробел.
 def get_sex_distrib(data):
-    n_male, n_female = 0, 0
     res = data['Sex'].value_counts()
     n_male, n_female = res['male'], res['female']
     return n_male, n_female
@@ -22,7 +21,6 @@ def get_sex_distrib(data):
 
 # TODO #2 Подсчитайте сколько пассажиров загрузилось на борт в различных портах? Приведите три числа через пробел.
 def get_port_distrib(data):
-    port_S, port_C, port_Q = 0, 0, 0
     res = data['Embarked'].value_counts()
     port_S, port_C, port_Q = res['S'], res['C'], res['Q']
     return port_S, port_C, port_Q
@@ -30,7 +28,6 @@ def get_port_distrib(data):
 
 # TODO #3 Посчитайте долю погибших на параходе (число и процент)?
 def get_surv_percent(data):
-    n_died, perc_died = 0, 0
     res = data['Survived'].value_counts()
     n_died = res[0]
     perc_died = round(n_died/get_number_of_pass(data) * 100, 2)
@@ -39,7 +36,6 @@ def get_surv_percent(data):
 
 # TODO #4 Какие доли составляли пассажиры первого, второго, третьего класса? 
 def get_class_distrib(data):
-    n_pas_f_cl, n_pas_s_cl, n_pas_t_cl = (0, 0), (0, 0), (0, 0)
     res = data['Pclass'].value_counts()
     all_pass = get_number_of_pass(data)
     n_pas_f_cl, n_pas_s_cl, n_pas_t_cl = (
@@ -82,25 +78,27 @@ def find_corr_class_survival(data):
 
 # TODO #7 Посчитайте средний возраст пассажиров и медиану.
 def find_pass_mean_median(data):
-    mean_age, median = None, None
-    all_pass = get_number_of_pass(data)
+    all_pass = data['Age'].notnull().sum()
     mean_age = round(data['Age'].sum()/all_pass, 2)
+    lst_median = data[data['Age'].notna()]['Age'].values.tolist()
+    lst_median.sort()
     if all_pass % 2 != 0:
-        median = data.iloc[all_pass//2]['Age']
+        median = lst_median[all_pass//2]
     else:
-        median = (data.iloc[all_pass//2 - 1]['Age'] + data.iloc[all_pass//2]['Age'])/.2
+        median = (lst_median[all_pass//2 - 1] + lst_median[all_pass//2])/2
     return mean_age, round(median, 2)
 
 
 # TODO #8 Посчитайте среднюю цену за билет и медиану.
 def find_ticket_mean_median(data):
-    mean_price, median = None, None
     all_pass = get_number_of_pass(data)
     mean_price = round(data['Fare'].sum()/all_pass, 2)
+    lst_median = data['Fare'].values.tolist()
+    lst_median.sort()
     if all_pass % 2 != 0:
-        median = data.iloc[all_pass//2]['Fare']
+        median = lst_median[all_pass//2]
     else:
-        median = (data.iloc[all_pass//2 - 1]['Fare'] + data.iloc[all_pass//2]['Fare'])/.2
+        median = (lst_median[all_pass//2 - 1] + lst_median[all_pass//2])/2
     return mean_price, round(median, 2)
 
 
