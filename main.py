@@ -102,21 +102,43 @@ def find_ticket_mean_median(data):
     return mean_price, round(median, 2)
 
 
-# TODO #9
+# TODO #9 Какое самое популярное мужское имя на корабле?
 def find_popular_name(data):
-    """
-    9. Какое самое популярное мужское имя на корабле?
-    """
-    name = ""
-    return name
+    from collections import Counter
+    import re
+    lst_male_fullnames = data[data['Sex'] == "male"]['Name'].values.tolist()
+    lst_male_firstnames = []
+    for fullname in lst_male_fullnames:
+        name = fullname.split(". ", 1)[1]
+        name = re.sub('[()"]', "", name)
+        name = name.split()
+        lst_male_firstnames.extend(name)
+    most_popular_male_name = Counter(lst_male_firstnames).most_common(1)[0][0]
+    return most_popular_male_name
 
 
-# TODO #10
+# TODO #10 Какие самые популярные мужское и женское имена людей, старше 15 лет на корабле?
 def find_popular_adult_names(data):
-    """
-    10. Какие самые популярные мужское и женские имена людей, старше 15 лет на корабле?
-    """
-    popular_male_name, popular_female_name = "", ""
+    from collections import Counter
+    import re
+    lst_male_fullnames = data[(data['Sex'] == "male") & (data['Age'] > 15)]['Name'].values.tolist()
+    lst_female_fullnames = data[(data['Sex'] == "female") &(data['Age'] > 15)]['Name'].values.tolist()
+    lst_male_firstnames = []
+    for fullname in lst_male_fullnames:
+        name = fullname.split(". ", 1)[1]
+        name = re.sub('[()"]', "", name)
+        name = name.split()
+        lst_male_firstnames.extend(name)
+    lst_female_firstnames = []
+    for fullname in lst_female_fullnames:
+        name = fullname.split(". ", 1)[1]
+        name = re.sub('[")]', "", name)
+        if "(" in name:
+            name = name.split("(")[1]
+        name = name.split()
+        lst_female_firstnames.extend(name)
+    popular_male_name = Counter(lst_male_firstnames).most_common(1)[0][0]
+    popular_female_name = Counter(lst_female_firstnames).most_common(1)[0][0]
     return popular_male_name, popular_female_name
 
 #0
@@ -168,3 +190,11 @@ print("\n7. Каков средний возраст пассажиров и к�
 ticket_mean_median = find_ticket_mean_median(data)
 print("\n8. Какова средняя цена за билет и какое значение медианы?\nРезультат: средняя цена за билет = " 
       + str(ticket_mean_median[0]) + ", медиана = " + str(ticket_mean_median[1]) + ".")
+
+#9
+print("\n9. Какое самое популярное мужское имя на корабле?\nРезультат: самое популярное мужское имя = " + find_popular_name(data))
+
+#10
+popular_names = find_popular_adult_names(data)
+print("\n10. Какие самые популярные мужское и женское имена людей, старше 15 лет на корабле?\nРезультат: самое популярное мужское имя = "
+       + popular_names[0] + ", самое популярное женское имя = " + popular_names[1])
