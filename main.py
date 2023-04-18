@@ -2,10 +2,12 @@ import pandas as pd
 
 data = pd.read_csv('train.csv', index_col="PassengerId")
 
+
 # TODO #0 Общее количество пассажиров. 
 def get_number_of_pass(data):
     res = data.shape[0]
     return res
+
 
 # TODO #1 Какое количество мужчин и женщин ехало на параходе? Приведите два числа через пробел.
 def get_sex_distrib(data):
@@ -135,6 +137,7 @@ def find_popular_adult_names(data):
     popular_male_name = Counter(lst_male_firstnames).most_common(1)[0][0]
     popular_female_name = Counter(lst_female_firstnames).most_common(1)[0][0]
     return popular_male_name, popular_female_name
+
 
 #0
 print("0. Вычисление количества пассажиров на параходе\nРезультат: количество пассажиров на параходе = " + str(get_number_of_pass(data)) + ".")

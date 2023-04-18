@@ -1,7 +1,5 @@
 from main import *
 
-# TODO 
-
 data = pd.read_csv('train.csv', index_col="PassengerId")
 
 def test_get_number_of_pass():
